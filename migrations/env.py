@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from models.base import Base
 
 from models.weather import WeatherData  # noqa: F401
+from models.wind import WindData  # noqa: F401
 
 config = context.config
 

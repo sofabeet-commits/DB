@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, Time
+from sqlalchemy.orm import relationship
 
 from models.base import Base
 
@@ -32,6 +33,8 @@ class WeatherData(Base):
     wind_mph = Column(Float)
     gust_mph = Column(Float)
     gust_kph = Column(Float)
+
+    wind = relationship("WindData", back_populates="weather", uselist=False)
 
     def __repr__(self):
         return f"<Weather {self.country}/{self.location_name} {self.last_updated}>"
