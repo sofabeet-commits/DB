@@ -16,6 +16,8 @@ def main():
         "fill": CLI.cmd_fill,
         "query": lambda: _handle_query(),
         "info": CLI.cmd_info,
+        "cross-migrate": CLI.cmd_cross_migrate,
+        "demo": CLI.cmd_demo,
     }
 
     handler = commands.get(command)

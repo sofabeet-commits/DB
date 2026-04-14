@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from config.database import get_session, DB_URL, CSV_PATH
+from config.database import get_session, DB_URL, TARGET_DB_URL, CSV_PATH
 from repositories import WeatherRepository, WindRepository
 from services import CsvService, WeatherService, MigrationService
 
@@ -117,6 +117,42 @@ class CLI:
             session.close()
 
     @staticmethod
+    def cmd_cross_migrate():
+        print(f"Джерело: {DB_URL}")
+        print(f"Цiль:    {TARGET_DB_URL}")
+        print()
+
+        result = MigrationService.cross_migrate(DB_URL, TARGET_DB_URL)
+
+        print(f"Скопiйовано {result['weather_count']} записiв weather_data")
+        print(f"Скопiйовано {result['wind_count']} записiв wind_data")
+        print("Крос-мiграцiя завершена!")
+
+    @staticmethod
+    def cmd_demo():
+        CLI.cmd_migrate()
+        CLI.cmd_load()
+        CLI.cmd_fill()
+        CLI.cmd_info()
+
+        print("\nЗапит погоди для України:")
+        CLI.cmd_query_auto("Ukraine")
+
+        print("\nКрос-мiграцiя на другу БД:")
+        CLI.cmd_cross_migrate()
+
+        print("\nПеревiряємо цiльову БД:")
+        session, engine = get_session(TARGET_DB_URL)
+        weather_repo = WeatherRepository(session)
+        wind_repo = WindRepository(session)
+        print(f"  weather_data: {weather_repo.count()} записiв")
+        if wind_repo.table_exists():
+            print(f"  wind_data:    {wind_repo.count()} записiв")
+        session.close()
+
+        print("\nГотово!")
+
+    @staticmethod
     def _print_weather_entry(entry: dict):
         print(f"  {entry['location']} ({entry['country']})")
         print(f"  Дата:        {entry['last_updated']}")
@@ -149,3 +185,5 @@ class CLI:
         print("  python main.py query                    - запит погоди (iнтерактивно)")
         print("  python main.py query <країна> [дата]    - запит погоди (автоматично)")
         print("  python main.py info                     - статистика бази")
+        print("  python main.py cross-migrate            - мiграцiя на iншу БД")
+        print("  python main.py demo                     - запустити все по порядку")

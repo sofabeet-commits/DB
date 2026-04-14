@@ -5,6 +5,8 @@ from sqlalchemy.orm import sessionmaker
 
 DB_URL = os.getenv("DATABASE_URL", "sqlite:///weather.db")
 
+TARGET_DB_URL = os.getenv("TARGET_DATABASE_URL", "sqlite:///weather_target.db")
+
 CSV_PATH = os.getenv("CSV_PATH", os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     "data", "GlobalWeatherRepository.csv"
