@@ -13,6 +13,7 @@ def main():
     commands = {
         "migrate": CLI.cmd_migrate,
         "load": CLI.cmd_load,
+        "fill": CLI.cmd_fill,
         "info": CLI.cmd_info,
     }
 

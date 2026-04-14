@@ -29,6 +29,16 @@ class WindRepository:
         rows = self.session.query(WindData.weather_id).all()
         return {r[0] for r in rows}
 
+    def count_safe(self) -> int:
+        return self.session.query(WindData).filter(
+            WindData.should_go_outside == True
+        ).count()
+
+    def count_danger(self) -> int:
+        return self.session.query(WindData).filter(
+            WindData.should_go_outside == False
+        ).count()
+
     def table_exists(self) -> bool:
         try:
             self.session.execute(text("SELECT 1 FROM wind_data LIMIT 1"))
