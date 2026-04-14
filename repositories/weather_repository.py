@@ -42,3 +42,25 @@ class WeatherRepository:
             WeatherData.last_updated >= date,
             WeatherData.last_updated < date.replace(hour=23, minute=59, second=59),
         ).all()
+
+    def find_by_filters(
+        self,
+        country: str | None = None,
+        date: datetime | None = None,
+        location: str | None = None,
+    ) -> list[WeatherData]:
+        query = self.session.query(WeatherData)
+
+        if country:
+            query = query.filter(WeatherData.country.ilike(f"%{country}%"))
+        if location:
+            query = query.filter(WeatherData.location_name.ilike(f"%{location}%"))
+        if date:
+            query = query.filter(
+                WeatherData.last_updated >= date,
+                WeatherData.last_updated < date.replace(
+                    hour=23, minute=59, second=59
+                ),
+            )
+
+        return query.order_by(WeatherData.last_updated).all()

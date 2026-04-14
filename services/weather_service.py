@@ -1,4 +1,6 @@
-from models import WindData
+from datetime import datetime
+
+from models import WeatherData, WindData
 from repositories import WeatherRepository, WindRepository
 
 
@@ -64,6 +66,57 @@ class WeatherService:
 
         self.wind_repo.commit()
         return updated, len(winds)
+
+    def query_weather(
+        self,
+        country: str | None = None,
+        date: datetime | None = None,
+        location: str | None = None,
+    ) -> list[dict]:
+        results = self.weather_repo.find_by_filters(
+            country=country, date=date, location=location
+        )
+
+        output = []
+        for w in results:
+            wind = self.wind_repo.get_by_weather_id(w.id)
+            entry = {
+                "country": w.country,
+                "location": w.location_name,
+                "last_updated": w.last_updated,
+                "temperature": w.temperature_celsius,
+                "condition": w.condition_text,
+                "humidity": w.humidity,
+                "pressure_mb": w.pressure_mb,
+                "visibility_km": w.visibility_km,
+                "sunrise": w.sunrise,
+                "sunset": w.sunset,
+                "latitude": w.latitude,
+                "longitude": w.longitude,
+            }
+            if wind:
+                entry.update({
+                    "wind_kph": wind.wind_kph,
+                    "wind_mph": wind.wind_mph,
+                    "wind_degree": wind.wind_degree,
+                    "wind_direction": wind.wind_direction,
+                    "gust_kph": wind.gust_kph,
+                    "gust_mph": wind.gust_mph,
+                    "should_go_outside": wind.should_go_outside,
+                })
+            else:
+                entry.update({
+                    "wind_kph": w.wind_kph,
+                    "wind_mph": w.wind_mph,
+                    "wind_degree": w.wind_degree,
+                    "wind_direction": w.wind_direction,
+                    "gust_kph": w.gust_kph,
+                    "gust_mph": w.gust_mph,
+                    "should_go_outside": None,
+                })
+            output.append(entry)
+
+        return output
 
     def get_statistics(self) -> dict:
         stats = {
