@@ -21,14 +21,14 @@ class CLI:
         print(f"База даних: {DB_URL}")
         output = MigrationService.run_alembic(DB_URL)
         print(output)
-        print("Мiграцiї успiшно застосованi!")
+        print("Міграції успішно застосовані!")
 
     @staticmethod
     def cmd_load():
         session, weather_service, csv_service = CLI._build_services()
         try:
             count = csv_service.load_csv(CSV_PATH)
-            print(f"Завантажено {count} записiв в weather_data")
+            print(f"Завантажено {count} записів в weather_data")
         except FileNotFoundError as e:
             print(str(e))
         finally:
@@ -39,7 +39,7 @@ class CLI:
         session, weather_service, csv_service = CLI._build_services()
         try:
             updated, total = weather_service.fill_should_go_outside()
-            print(f"Оновлено {updated} з {total} записiв у wind_data")
+            print(f"Оновлено {updated} з {total} записів у wind_data")
         except RuntimeError as e:
             print(str(e))
         finally:
@@ -50,16 +50,16 @@ class CLI:
         session, weather_service, csv_service = CLI._build_services()
 
         try:
-            country = input("Введiть країну (або Enter для всiх): ").strip()
-            date_str = input("Введiть дату (YYYY-MM-DD) або Enter для всiх: ").strip()
-            location = input("Введiть мiсто (або Enter для всiх): ").strip()
+            country = input("Введіть країну (або Enter для всіх): ").strip()
+            date_str = input("Введіть дату (YYYY-MM-DD) або Enter для всіх: ").strip()
+            location = input("Введіть місто (або Enter для всіх): ").strip()
 
             date = None
             if date_str:
                 try:
                     date = datetime.strptime(date_str, "%Y-%m-%d")
                 except ValueError:
-                    print("Невiрний формат дати! Використовуйте YYYY-MM-DD")
+                    print("Невірний формат дати! Використовуйте YYYY-MM-DD")
                     return
 
             results = weather_service.query_weather(
@@ -69,10 +69,10 @@ class CLI:
             )
 
             if not results:
-                print("Записiв не знайдено.")
+                print("Записів не знайдено.")
                 return
 
-            print(f"\nЗнайдено {len(results)} записiв:\n")
+            print(f"\nЗнайдено {len(results)} записів:\n")
             for entry in results:
                 CLI._print_weather_entry(entry)
         finally:
@@ -90,10 +90,10 @@ class CLI:
             results = weather_service.query_weather(country=country, date=date)
 
             if not results:
-                print(f"Записiв для '{country}' не знайдено.")
+                print(f"Записів для '{country}' не знайдено.")
                 return
 
-            print(f"\nЗнайдено {len(results)} записiв:\n")
+            print(f"\nЗнайдено {len(results)} записів:\n")
             for entry in results:
                 CLI._print_weather_entry(entry)
         finally:
@@ -105,10 +105,10 @@ class CLI:
         try:
             stats = weather_service.get_statistics()
 
-            print(f"weather_data: {stats['weather_count']} записiв")
+            print(f"weather_data: {stats['weather_count']} записів")
 
             if stats["wind_count"] is not None:
-                print(f"wind_data:    {stats['wind_count']} записiв")
+                print(f"wind_data:    {stats['wind_count']} записів")
                 print(f"  безпечно виходити:   {stats['safe_count']}")
                 print(f"  краще не виходити:   {stats['danger_count']}")
             else:
@@ -119,14 +119,14 @@ class CLI:
     @staticmethod
     def cmd_cross_migrate():
         print(f"Джерело: {DB_URL}")
-        print(f"Цiль:    {TARGET_DB_URL}")
+        print(f"Ціль:    {TARGET_DB_URL}")
         print()
 
         result = MigrationService.cross_migrate(DB_URL, TARGET_DB_URL)
 
-        print(f"Скопiйовано {result['weather_count']} записiв weather_data")
-        print(f"Скопiйовано {result['wind_count']} записiв wind_data")
-        print("Крос-мiграцiя завершена!")
+        print(f"Скопійовано {result['weather_count']} записів weather_data")
+        print(f"Скопійовано {result['wind_count']} записів wind_data")
+        print("Крос-міграція завершена!")
 
     @staticmethod
     def cmd_demo():
@@ -138,16 +138,16 @@ class CLI:
         print("\nЗапит погоди для України:")
         CLI.cmd_query_auto("Ukraine")
 
-        print("\nКрос-мiграцiя на другу БД:")
+        print("\nКрос-міграція на другу БД:")
         CLI.cmd_cross_migrate()
 
-        print("\nПеревiряємо цiльову БД:")
+        print("\nПеревіряємо цільову БД:")
         session, engine = get_session(TARGET_DB_URL)
         weather_repo = WeatherRepository(session)
         wind_repo = WindRepository(session)
-        print(f"  weather_data: {weather_repo.count()} записiв")
+        print(f"  weather_data: {weather_repo.count()} записів")
         if wind_repo.table_exists():
-            print(f"  wind_data:    {wind_repo.count()} записiв")
+            print(f"  wind_data:    {wind_repo.count()} записів")
         session.close()
 
         print("\nГотово!")
@@ -158,32 +158,32 @@ class CLI:
         print(f"  Дата:        {entry['last_updated']}")
         print(f"  Температура: {entry['temperature']}°C")
         print(f"  Стан:        {entry['condition']}")
-        print(f"  Вологiсть:   {entry['humidity']}%")
+        print(f"  Вологість:   {entry['humidity']}%")
         print(f"  Тиск:        {entry['pressure_mb']} мб")
-        print(f"  Видимiсть:   {entry['visibility_km']} км")
-        print(f"  Схiд сонця:  {entry['sunrise']}")
-        print(f"  Захiд сонця: {entry['sunset']}")
-        print(f"  Вiтер:")
-        print(f"  Швидкiсть:   {entry['wind_kph']} км/год ({entry['wind_mph']} миль/год)")
+        print(f"  Видимість:   {entry['visibility_km']} км")
+        print(f"  Схід сонця:  {entry['sunrise']}")
+        print(f"  Захід сонця: {entry['sunset']}")
+        print(f"  Вітер:")
+        print(f"  Швидкість:   {entry['wind_kph']} км/год ({entry['wind_mph']} миль/год)")
         print(f"  Напрямок:    {entry['wind_direction']} ({entry['wind_degree']}°)")
         print(f"  Пориви:      {entry['gust_kph']} км/год")
 
         if entry["should_go_outside"] is not None:
-            go = "Так" if entry["should_go_outside"] else "Hi"
+            go = "Так" if entry["should_go_outside"] else "Ні"
             print(f"  Виходити?    {go}")
         print()
 
     @staticmethod
     def print_usage():
-        print("Мiграцiя погодної бази даних")
-        print("Категорiя: 1 (вiтер)")
+        print("Міграція погодної бази даних")
+        print("Категорія: 1 (вітер)")
         print()
         print("Використання:")
-        print("  python main.py migrate                  - накотити мiграцiї")
+        print("  python main.py migrate                  - накотити міграції")
         print("  python main.py load                     - завантажити CSV")
         print("  python main.py fill                     - заповнити should_go_outside")
-        print("  python main.py query                    - запит погоди (iнтерактивно)")
+        print("  python main.py query                    - запит погоди (інтерактивно)")
         print("  python main.py query <країна> [дата]    - запит погоди (автоматично)")
         print("  python main.py info                     - статистика бази")
-        print("  python main.py cross-migrate            - мiграцiя на iншу БД")
+        print("  python main.py cross-migrate            - міграція на іншу БД")
         print("  python main.py demo                     - запустити все по порядку")
